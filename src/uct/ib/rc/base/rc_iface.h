@@ -249,6 +249,11 @@ typedef struct uct_rc_srq {
 } uct_rc_srq_t;
 
 
+typedef struct uct_rc_iface_init_attr {
+    uct_ib_iface_init_attr_t super;
+} uct_rc_iface_init_attr_t;
+
+
 struct uct_rc_iface {
     uct_ib_iface_t              super;
 
@@ -327,7 +332,7 @@ struct uct_rc_iface {
 UCS_CLASS_DECLARE(uct_rc_iface_t, uct_iface_ops_t*, uct_rc_iface_ops_t*,
                   uct_md_h, uct_worker_h, const uct_iface_params_t*,
                   const uct_rc_iface_common_config_t*,
-                  const uct_ib_iface_init_attr_t*);
+                  const uct_rc_iface_init_attr_t*);
 
 
 struct uct_rc_iface_send_op {
