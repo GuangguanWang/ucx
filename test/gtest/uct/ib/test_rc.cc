@@ -656,6 +656,13 @@ public:
         return uct_ib_md_get_atomic_mr_id(md);
     }
 
+    int rc_iface_flush_rkey_valid(entity *e)
+    {
+        uct_rc_iface_t *rc_iface = ucs_derived_of(e->iface(), uct_rc_iface_t);
+        uct_ib_md_t *md          = uct_ib_iface_md(&rc_iface->super);
+        return uct_ib_md_is_flush_rkey_valid(md->flush_rkey);
+    }
+
     uct_iface_params_t iface_params()
     {
         uct_iface_params_t params = {};
@@ -710,10 +717,13 @@ public:
 
 UCS_TEST_P(test_rc_iface_flush_remote, size_no_flush_remote)
 {
+    /* rc_verbs appends the atomic MR id and flush rkey to the endpoint address
+     * only when the MD provides a valid flush rkey. */
+    int flush_rkey_valid = rc_iface_flush_rkey_valid(m_e1);
     map_size_t sizes = {
         {"rc_mlx5", {7, 1}},
         {"dc_mlx5", {0, 5}},
-        {"rc_verbs", {7, 0}},
+        {"rc_verbs", {flush_rkey_valid ? 7 : 4, 0}},
         {"gga_mlx5", {7, 8}},
     };
     check_sizes(m_e1, sizes);
